@@ -11,13 +11,17 @@ TEMPLATE_ENVIRONMENT = jinja2.Environment(
     
 template = TEMPLATE_ENVIRONMENT.get_template('./site_files/login_test.html')
 
+LOGOUT_URL = users.create_logout_url("/")
 
 class UserLogin(webapp2.RequestHandler):
-    def get(self):
+
+    
+    
         
+    def get(self):
         user = users.get_current_user()
         login_url = users.create_login_url(self.request.uri)
-        logout_url = users.create_logout_url(self.request.uri)
+        
         
         #reverse this. It would be easier.  So if user NOT logged in redirect to login page.
         #if logged in do a bunch of other stuff.
@@ -27,7 +31,7 @@ class UserLogin(webapp2.RequestHandler):
                     'page': "home",
                     'current_url' : self.request.url,
                      'login_url': login_url,
-                    'logout_url': logout_url,
+                    'logout_url': LOGOUT_URL,
                     'user': user,
                     'response': ''
                   }
@@ -36,3 +40,9 @@ class UserLogin(webapp2.RequestHandler):
         else:
             
             self.redirect(users.create_login_url(self.request.uri))
+            
+            
+    def post(self):
+        user = users.get_current_user()
+        if user:
+            self.redirect(LOGOUT_URL)
